@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize Telegram WebApp
     if (window.Telegram && window.Telegram.WebApp) {
         window.Telegram.WebApp.expand();
     }
@@ -17,10 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
         'url("assets/blum.jpeg")',
         'url("assets/cati.jpeg")',
         'url("assets/dogs.jpeg")',
-        'url("assets/ethena.jpeg")',
+        'url("assets/build.webp")',
         'url("assets/notcoin.png")',
         'url("assets/notpixel.jpeg")',
-        'url("assets/ton.jpeg")'
+        'url("assets/ton.jpeg")',
+        'url("assets/redo.webp")',
     ];
 
     const colorMap = {
@@ -30,6 +30,16 @@ document.addEventListener('DOMContentLoaded', () => {
         'url("assets/ethena.jpeg")': '#aa00ff', 
         'url("assets/notcoin.png")': '#ffd700', 
         'url("assets/notpixel.jpeg")': '#00e5ff', 
+        'url("assets/ton.jpeg")': '#0088cc'   
+    };
+
+    const bgMap = {
+        'url("assets/blum.jpeg")': '#000000', 
+        'url("assets/cati.jpeg")': '#0f0f11', 
+        'url("assets/dogs.jpeg")': '#000000', 
+        'url("assets/ethena.jpeg")': '#000000', 
+        'url("assets/notcoin.png")': 'transparent', 
+        'url("assets/notpixel.jpeg")': '#0a101d', 
         'url("assets/ton.jpeg")': '#0088cc'   
     };
 
@@ -43,7 +53,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const square = document.createElement('div');
             square.setAttribute('id', i);
             let randomCoin = Math.floor(Math.random() * coinImages.length);
-            square.style.backgroundImage = coinImages[randomCoin];
+            let selectedCoin = coinImages[randomCoin];
+            
+            square.style.backgroundImage = selectedCoin;
+            square.style.backgroundColor = bgMap[selectedCoin]; 
             
             square.addEventListener('touchstart', handleTouchStart, {passive: false});
             square.addEventListener('touchend', handleTouchEnd);
@@ -89,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let diffX = endX - startX;
         let diffY = endY - startY;
         
-        if (Math.abs(diffX) < 15 && Math.abs(diffY) < 15) {
+        if (Math.abs(diffX) < 25 && Math.abs(diffY) < 25) {
             currentSquare = null;
             return; 
         }
@@ -136,6 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
         square1.classList.add(class1);
         square2.classList.add(class2);
 
+        // SYNCED: Increased from 250ms to 400ms for the deliberate, slower slide
         setTimeout(() => {
             square1.classList.remove(class1);
             square2.classList.remove(class2);
@@ -148,22 +162,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 square1.classList.add('wrong-swap');
                 square2.classList.add('wrong-swap');
                 
+                // SYNCED: Increased from 400ms to 500ms for the slower error shake
                 setTimeout(() => {
                     square1.classList.remove('wrong-swap');
                     square2.classList.remove('wrong-swap');
                     isAnimating = false; 
-                }, 300);
+                }, 500); 
             } else {
                 checkMatches();
                 isAnimating = false; 
             }
-        }, 200);
+        }, 400); 
     }
 
     function swap(square1, square2) {
-        let temp = square1.style.backgroundImage;
+        let tempImg = square1.style.backgroundImage;
+        let tempColor = square1.style.backgroundColor;
+
         square1.style.backgroundImage = square2.style.backgroundImage;
-        square2.style.backgroundImage = temp;
+        square1.style.backgroundColor = square2.style.backgroundColor;
+
+        square2.style.backgroundImage = tempImg;
+        square2.style.backgroundColor = tempColor;
     }
 
     function checkValidMatch() {
@@ -222,21 +242,36 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (matchedIndices.size > 0) {
-            if (matchedIndices.size === 3) score += 3;
-            else if (matchedIndices.size === 4) score += 5; 
-            else score += 10; 
+            let pointsEarned = 0;
+            if (matchedIndices.size === 3) pointsEarned = 3;
+            else if (matchedIndices.size === 4) pointsEarned = 5; 
+            else pointsEarned = 10; 
             
+            score += pointsEarned;
             scoreDisplay.innerHTML = score;
+            
             scoreDisplay.classList.add('score-pop');
             setTimeout(() => {
                 scoreDisplay.classList.remove('score-pop');
             }, 300);
+
+            let firstSquare = squares[Array.from(matchedIndices)[0]];
+            let floatText = document.createElement('div');
+            floatText.classList.add('floating-text');
+            floatText.innerHTML = `+${pointsEarned}`;
+            firstSquare.appendChild(floatText);
+            
+            // SYNCED: Waits 2000ms (2s) for the new calm float animation
+            setTimeout(() => {
+                if (firstSquare.contains(floatText)) firstSquare.removeChild(floatText);
+            }, 2000);
             
             matchedIndices.forEach(index => {
                 let square = squares[index];
                 let bgImage = square.style.backgroundImage;
                 
                 square.style.backgroundImage = '';
+                square.style.backgroundColor = 'transparent'; 
                 
                 let pop = document.createElement('div');
                 pop.classList.add('pop-effect');
@@ -247,11 +282,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 square.appendChild(pop);
                 
+                // SYNCED: Waits 600ms for the newly extended explosion animation
                 setTimeout(() => {
                     if (square.contains(pop)) {
                         square.removeChild(pop);
                     }
-                }, 400);
+                }, 600); 
             });
             return true;
         }
@@ -262,21 +298,31 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 29; i >= 0; i--) { 
             if (squares[i + width].style.backgroundImage === '') {
                 squares[i + width].style.backgroundImage = squares[i].style.backgroundImage;
+                squares[i + width].style.backgroundColor = squares[i].style.backgroundColor;
+                
                 squares[i].style.backgroundImage = '';
+                squares[i].style.backgroundColor = 'transparent';
                 
                 squares[i + width].classList.add('falling');
                 let targetSquare = squares[i + width];
-                setTimeout(() => targetSquare.classList.remove('falling'), 300);
+                
+                // SYNCED: Waits 500ms for the softer gravity drop
+                setTimeout(() => targetSquare.classList.remove('falling'), 500);
             }
         }
         for (let i = 0; i < width; i++) {
             if (squares[i].style.backgroundImage === '') {
                 let randomCoin = Math.floor(Math.random() * coinImages.length);
-                squares[i].style.backgroundImage = coinImages[randomCoin];
+                let selectedCoin = coinImages[randomCoin];
+                
+                squares[i].style.backgroundImage = selectedCoin;
+                squares[i].style.backgroundColor = bgMap[selectedCoin];
                 
                 squares[i].classList.add('falling');
                 let targetSquare = squares[i];
-                setTimeout(() => targetSquare.classList.remove('falling'), 300);
+                
+                // SYNCED: Waits 500ms for the softer gravity drop
+                setTimeout(() => targetSquare.classList.remove('falling'), 500);
             }
         }
     }
@@ -302,30 +348,32 @@ document.addEventListener('DOMContentLoaded', () => {
         return false;
     }
 
-    // RETRY FUNCTIONALITY
     function restartGame() {
         score = 0;
         scoreDisplay.innerHTML = score;
         deadEndMessage.style.display = 'none';
         isAnimating = false;
 
-        // Clear the board first
         squares.forEach(square => {
             square.style.backgroundImage = '';
+            square.style.backgroundColor = 'transparent';
         });
 
-        // Drop in brand new coins
         for (let i = 0; i < width * width; i++) {
             let randomCoin = Math.floor(Math.random() * coinImages.length);
-            squares[i].style.backgroundImage = coinImages[randomCoin];
+            let selectedCoin = coinImages[randomCoin];
+            
+            squares[i].style.backgroundImage = selectedCoin;
+            squares[i].style.backgroundColor = bgMap[selectedCoin];
             
             squares[i].classList.add('falling');
             let targetSquare = squares[i];
-            setTimeout(() => targetSquare.classList.remove('falling'), 300);
+            
+            // SYNCED: Waits 500ms for the softer gravity drop
+            setTimeout(() => targetSquare.classList.remove('falling'), 500);
         }
     }
 
-    // Use both click and touchstart for mobile reliability
     if (retryBtn) {
         retryBtn.addEventListener('click', restartGame);
         retryBtn.addEventListener('touchstart', (e) => {

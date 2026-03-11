@@ -5,10 +5,11 @@
     touch-action: none; 
 }
 
+/* 1. Slower, Dreamy Background (Changed from 15s to 30s) */
 body {
-    background: linear-gradient(-45deg, #121212, #1a2a6c, #112240, #000000);
+    background: linear-gradient(-45deg, #0f172a, #2e1065, #083344, #172554);
     background-size: 400% 400%;
-    animation: gradientBG 15s ease infinite;
+    animation: gradientBG 30s ease infinite;
     color: #ffffff;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
@@ -18,10 +19,16 @@ body {
     overflow: hidden;
 }
 
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
 .game-container {
     width: 100%;
-    max-width: 400px;
-    padding: 20px;
+    max-width: 500px; 
+    padding: 10px; 
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -30,6 +37,24 @@ body {
 header {
     text-align: center;
     margin-bottom: 20px;
+}
+
+/* 2. Softer, Slower Title Pulse (Changed from 2s to 4s) */
+.glow-title {
+    font-size: 3rem;
+    font-weight: 900;
+    background: linear-gradient(to right, #0088cc, #00e5ff, #aa00ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    animation: title-pulse 4s ease-in-out infinite alternate;
+    margin-bottom: 15px;
+}
+
+@keyframes title-pulse {
+    from { filter: drop-shadow(0 0 5px rgba(0, 136, 204, 0.3)); }
+    to { filter: drop-shadow(0 0 15px rgba(0, 229, 255, 0.6)); }
 }
 
 .score-board {
@@ -58,7 +83,6 @@ header {
     display: inline-block;
 }
 
-/* Animation class triggered by JavaScript */
 .score-pop {
     transform: scale(1.6) rotate(5deg);
     color: #ffd700;
@@ -67,21 +91,20 @@ header {
 
 .grid {
     display: grid;
-    grid-template-columns: repeat(6, 1fr); /* Changed to 6 columns */
-    grid-gap: 8px; /* Slightly larger gap to let the coins breathe */
+    grid-template-columns: repeat(6, 1fr); 
+    grid-gap: 6px; 
     width: 100%;
-    max-width: 360px; /* Tighter max-width for better centering */
+    max-width: 420px; 
     aspect-ratio: 1 / 1;
     
-    /* Modern Glass UI Effect */
-    background: rgba(44, 44, 44, 0.6);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(20, 25, 45, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 2px solid rgba(255, 255, 255, 0.15); 
     
-    padding: 12px;
-    border-radius: 16px; /* Softer, more modern corners */
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    padding: 12px; 
+    border-radius: 20px; 
+    box-shadow: 0 15px 35px rgba(0,0,0,0.6), inset 0 0 20px rgba(0, 136, 204, 0.2);
 }
 
 .grid div {
@@ -91,62 +114,52 @@ header {
     align-items: center;
     background-color: transparent; 
     border-radius: 50%; 
-    box-shadow: 0 4px 8px rgba(0,0,0,0.4); 
+    box-shadow: 0 5px 8px rgba(0,0,0,0.5), inset 0 4px 5px rgba(255,255,255,0.4); 
     user-select: none;
-    transition: transform 0.2s;
-    
-    /* THE FIX: Shrink the actual coin, keep it perfectly round, and center it */
-    width: 75%; 
+    width: 95%; 
     aspect-ratio: 1 / 1;
     margin: auto; 
-    
-    /* Change this back to cover so it fills the new smaller circle */
     background-size: cover; 
-    
     background-position: center;
     background-repeat: no-repeat;
 }
 
 .grid div.wrong-swap {
-    animation: shake-red 0.3s ease-in-out;
+    animation: snappy-shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
     box-shadow: 0 0 15px 5px rgba(255, 69, 58, 0.8);
     z-index: 10;
 }
 
-@keyframes shake-red {
+@keyframes snappy-shake {
     0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    50% { transform: translateX(5px); }
-    75% { transform: translateX(-5px); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
 }
 
+/* 3. Softer, Slower Gravity Drop (Extended to 0.5s) */
 .grid div.falling {
-    animation: smooth-drop 0.3s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+    animation: bouncy-drop 0.5s cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
 }
 
-@keyframes smooth-drop {
+@keyframes bouncy-drop {
     0% { transform: translateY(-100%); opacity: 0; }
-    50% { opacity: 1; }
-    100% { transform: translateY(0); }
+    60% { transform: translateY(10%); opacity: 1; } 
+    80% { transform: translateY(-5%); } 
+    100% { transform: translateY(0); } 
 }
 
-/* NEW: Candy Crush style pop effect */
-/* NEW: Vibrant Candy Crush style pop effect */
+/* 4. Buttery Smooth Explosions (Extended to 0.6s) */
 .pop-effect {
     position: absolute;
     width: 100%;
     height: 100%;
-    
-    /* Change this back to cover as well */
     background-size: cover; 
-    
     background-position: center;
     border-radius: 50%;
-    animation: crush-pop 0.4s ease-out forwards;
+    animation: juicy-pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     z-index: 20;
 }
 
-/* Creates the colorful expanding shockwave behind the coin */
 .pop-effect::after {
     content: '';
     position: absolute;
@@ -158,41 +171,53 @@ header {
     transform: translate(-50%, -50%) scale(0.5);
     border-radius: 50%;
     z-index: -1;
-    animation: color-blast 0.4s ease-out forwards;
+    animation: color-blast 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
     mix-blend-mode: screen;
 }
 
-@keyframes crush-pop {
-    0% { 
-        transform: scale(1); 
-        filter: brightness(1); 
-        opacity: 1; 
-    }
-    40% { 
-        transform: scale(1.2) rotate(15deg); 
-        filter: brightness(1.5) saturate(1.5); 
-        opacity: 0.9; 
-        box-shadow: 0 0 20px var(--pop-color); 
-    }
-    100% { 
-        transform: scale(0) rotate(-15deg); 
-        filter: brightness(2) saturate(2); 
-        opacity: 0; 
-        box-shadow: 0 0 40px var(--pop-color); 
-    }
+@keyframes juicy-pop {
+    0% { transform: scale(1); filter: brightness(1); opacity: 1; }
+    20% { transform: scale(0.85); filter: brightness(1.2); } 
+    50% { transform: scale(1.4) rotate(15deg); filter: brightness(1.5) saturate(1.5); opacity: 0.9; box-shadow: 0 0 30px var(--pop-color); }
+    100% { transform: scale(0) rotate(-15deg); filter: brightness(2) saturate(2); opacity: 0; }
 }
 
 @keyframes color-blast {
-    0% { 
-        transform: translate(-50%, -50%) scale(0.5); 
-        opacity: 0.8; 
-    }
-    100% { 
-        transform: translate(-50%, -50%) scale(2.5); 
-        opacity: 0; 
-    }
+    0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0.6; } /* Softer blast opacity */
+    100% { transform: translate(-50%, -50%) scale(2.8); opacity: 0; }
 }
 
+/* 5. Longer Floating Text (Extended to 2s) */
+.floating-text {
+    position: absolute;
+    color: #ffffff;
+    font-weight: 900;
+    font-size: 2.2rem;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.8), 0 0 10px #00e5ff;
+    pointer-events: none;
+    z-index: 50;
+    animation: floatUp 2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+}
+
+@keyframes floatUp {
+    0% { transform: translateY(0) scale(0.5); opacity: 0; }
+    15% { transform: translateY(-20px) scale(1.2); opacity: 1; }
+    70% { transform: translateY(-40px) scale(1.2); opacity: 1; } 
+    100% { transform: translateY(-60px) scale(1); opacity: 0; }
+}
+
+/* Swipes kept fast (0.25s) so controls still feel instantly responsive */
+.slide-right { animation: slideRight 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; z-index: 30; }
+.slide-left { animation: slideLeft 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; z-index: 30; }
+.slide-down { animation: slideDown 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; z-index: 30; }
+.slide-up { animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; z-index: 30; }
+
+@keyframes slideRight { 100% { transform: translateX(calc(100% + 6px)); } }
+@keyframes slideLeft { 100% { transform: translateX(calc(-100% - 6px)); } }
+@keyframes slideDown { 100% { transform: translateY(calc(100% + 6px)); } }
+@keyframes slideUp { 100% { transform: translateY(calc(-100% - 6px)); } }
+
+/* Dead End Menu */
 #dead-end-message {
     display: none;
     position: absolute;
@@ -213,13 +238,10 @@ header {
     z-index: 100;
 }
 
-#dead-end-message p {
-    margin-bottom: 20px;
-    color: #ff453a; /* Danger red text */
-}
+#dead-end-message p { margin-bottom: 20px; color: #ff453a; }
 
 #retry-btn {
-    background: #0088cc; /* Telegram Blue */
+    background: #0088cc; 
     color: white;
     border: none;
     padding: 12px 30px;
@@ -234,52 +256,4 @@ header {
 #retry-btn:active {
     transform: scale(0.95);
     background: #0077b5;
-}
-
-/* Add these new slide animations to the bottom of your style.css file */
-
-.slide-right { animation: slideRight 0.2s ease-in-out forwards; z-index: 30; }
-.slide-left { animation: slideLeft 0.2s ease-in-out forwards; z-index: 30; }
-.slide-down { animation: slideDown 0.2s ease-in-out forwards; z-index: 30; }
-.slide-up { animation: slideUp 0.2s ease-in-out forwards; z-index: 30; }
-
-@keyframes slideRight { 
-    0% { transform: translateX(0); } 
-    100% { transform: translateX(calc(100% + 6px)); } 
-}
-@keyframes slideLeft { 
-    0% { transform: translateX(0); } 
-    100% { transform: translateX(calc(-100% - 6px)); } 
-}
-@keyframes slideDown { 
-    0% { transform: translateY(0); } 
-    100% { transform: translateY(calc(100% + 6px)); } 
-}
-@keyframes slideUp { 
-    0% { transform: translateY(0); } 
-    100% { transform: translateY(calc(-100% - 6px)); } 
-}
-
-@keyframes gradientBG {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-/* New Creative Title */
-.glow-title {
-    font-size: 3rem;
-    font-weight: 900;
-    background: linear-gradient(to right, #0088cc, #00e5ff, #aa00ff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    animation: title-pulse 2s infinite alternate;
-    margin-bottom: 15px;
-}
-
-@keyframes title-pulse {
-    from { filter: drop-shadow(0 0 5px rgba(0, 136, 204, 0.4)); }
-    to { filter: drop-shadow(0 0 15px rgba(0, 229, 255, 0.8)); }
 }
