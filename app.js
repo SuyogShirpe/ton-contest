@@ -7,53 +7,88 @@ document.addEventListener('DOMContentLoaded', () => {
     const scoreDisplay = document.getElementById('score');
     const deadEndMessage = document.getElementById('dead-end-message');
     const retryBtn = document.getElementById('retry-btn');
+    const highScoreDisplay = document.getElementById('high-score-val');
+
+    const milestoneCard = document.getElementById('milestone-card');
+    const milestoneImage = document.getElementById('milestone-image');
+    const milestoneScoreVal = document.getElementById('milestone-score-val');
+    const milestoneQuote = document.getElementById('milestone-quote');
+    const milestoneContinueBtn = document.getElementById('milestone-continue-btn');
+    
+    // Welcome Card Elements
+    const welcomeCard = document.getElementById('welcome-card');
+    const startGameBtn = document.getElementById('start-game-btn');
     
     const width = 6; 
     const squares = [];
     let score = 0;
 
+    // Load High Score from local storage
+    let highScore = localStorage.getItem('tonCrushHighScore') || 0;
+    if (highScoreDisplay) highScoreDisplay.innerHTML = highScore;
+
     const coinImages = [
-        'url("assets/blum.jpeg")',
         'url("assets/cati.jpeg")',
         'url("assets/dogs.jpeg")',
-        'url("assets/build.webp")',
-        'url("assets/notcoin.png")',
-        'url("assets/notpixel.jpeg")',
+        'url("assets/build.png")',
         'url("assets/ton.jpeg")',
-        'url("assets/redo.webp")',
+        'url("assets/redo.webp")'
     ];
 
     const colorMap = {
-        'url("assets/blum.jpeg")': '#ff007f', 
         'url("assets/cati.jpeg")': '#ffaa00', 
-        'url("assets/dogs.jpeg")': '#ffffff', 
-        'url("assets/ethena.jpeg")': '#aa00ff', 
-        'url("assets/notcoin.png")': '#ffd700', 
-        'url("assets/notpixel.jpeg")': '#00e5ff', 
-        'url("assets/ton.jpeg")': '#0088cc'   
+        'url("assets/dogs.jpeg")': '#ffffff',   
+        'url("assets/ton.jpeg")': '#0088cc',
+        'url("assets/build.png")': '#cc00cc',
+        'url("assets/redo.webp")': '#16ffd0'    
     };
 
     const bgMap = {
-        'url("assets/blum.jpeg")': '#000000', 
         'url("assets/cati.jpeg")': '#0f0f11', 
         'url("assets/dogs.jpeg")': '#000000', 
-        'url("assets/ethena.jpeg")': '#000000', 
-        'url("assets/notcoin.png")': 'transparent', 
-        'url("assets/notpixel.jpeg")': '#0a101d', 
-        'url("assets/ton.jpeg")': '#0088cc'   
+        'url("assets/ton.jpeg")': '#0088cc',
+        'url("assets/build.png")': 'transparent', 
+        'url("assets/redo.webp")': 'transparent'  
     };
+
+    let milestoneTarget = 50; 
+    
+    const tonStickers = [
+        'assets/ton.jpeg', 
+        'assets/dogs.jpeg',
+        'assets/cati.jpeg'
+    ]; 
+    
+    const tonQuotes = [
+        '"Putting Crypto in every pocket."',
+        '"The Open Network is unstoppable."',
+        '"Build on TON, build for billions."',
+        '"Mass adoption starts right here."',
+        '"Web3 directly inside Telegram!"'
+    ];
 
     let startX = 0;
     let startY = 0;
     let currentSquare = null;
-    let isAnimating = false; 
+    
+    // LOCK THE BOARD ON LOAD
+    let isAnimating = true; 
 
     function createBoard() {
         for (let i = 0; i < width * width; i++) {
             const square = document.createElement('div');
             square.setAttribute('id', i);
-            let randomCoin = Math.floor(Math.random() * coinImages.length);
-            let selectedCoin = coinImages[randomCoin];
+            
+            let randomCoin;
+            let selectedCoin;
+            
+            do {
+                randomCoin = Math.floor(Math.random() * coinImages.length);
+                selectedCoin = coinImages[randomCoin];
+            } while (
+                (i % width >= 2 && squares[i - 1].style.backgroundImage === selectedCoin && squares[i - 2].style.backgroundImage === selectedCoin) ||
+                (i >= width * 2 && squares[i - width].style.backgroundImage === selectedCoin && squares[i - width * 2].style.backgroundImage === selectedCoin)
+            );
             
             square.style.backgroundImage = selectedCoin;
             square.style.backgroundColor = bgMap[selectedCoin]; 
@@ -149,7 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
         square1.classList.add(class1);
         square2.classList.add(class2);
 
-        // SYNCED: Increased from 250ms to 400ms for the deliberate, slower slide
         setTimeout(() => {
             square1.classList.remove(class1);
             square2.classList.remove(class2);
@@ -162,7 +196,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 square1.classList.add('wrong-swap');
                 square2.classList.add('wrong-swap');
                 
-                // SYNCED: Increased from 400ms to 500ms for the slower error shake
                 setTimeout(() => {
                     square1.classList.remove('wrong-swap');
                     square2.classList.remove('wrong-swap');
@@ -249,6 +282,38 @@ document.addEventListener('DOMContentLoaded', () => {
             
             score += pointsEarned;
             scoreDisplay.innerHTML = score;
+
+            // HIGH SCORE LOGIC
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('tonCrushHighScore', highScore);
+                if (highScoreDisplay) highScoreDisplay.innerHTML = highScore;
+                
+                const badge = document.querySelector('.high-score-badge');
+                if (badge) {
+                    badge.classList.add('record-broken');
+                    setTimeout(() => badge.classList.remove('record-broken'), 400);
+                }
+            }
+
+            // MILESTONE LOGIC
+            if (score >= milestoneTarget) {
+                let currentMilestoneScore = score; 
+                milestoneTarget += 50; 
+                
+                setTimeout(() => {
+                    isAnimating = true; 
+                    
+                    let randomSticker = tonStickers[Math.floor(Math.random() * tonStickers.length)];
+                    let randomQuote = tonQuotes[Math.floor(Math.random() * tonQuotes.length)];
+                    
+                    milestoneImage.src = randomSticker;
+                    milestoneQuote.innerHTML = randomQuote;
+                    milestoneScoreVal.innerHTML = currentMilestoneScore;
+                    
+                    milestoneCard.style.display = 'flex';
+                }, 1500);
+            }
             
             scoreDisplay.classList.add('score-pop');
             setTimeout(() => {
@@ -261,7 +326,6 @@ document.addEventListener('DOMContentLoaded', () => {
             floatText.innerHTML = `+${pointsEarned}`;
             firstSquare.appendChild(floatText);
             
-            // SYNCED: Waits 2000ms (2s) for the new calm float animation
             setTimeout(() => {
                 if (firstSquare.contains(floatText)) firstSquare.removeChild(floatText);
             }, 2000);
@@ -282,7 +346,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 square.appendChild(pop);
                 
-                // SYNCED: Waits 600ms for the newly extended explosion animation
                 setTimeout(() => {
                     if (square.contains(pop)) {
                         square.removeChild(pop);
@@ -306,7 +369,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 squares[i + width].classList.add('falling');
                 let targetSquare = squares[i + width];
                 
-                // SYNCED: Waits 500ms for the softer gravity drop
                 setTimeout(() => targetSquare.classList.remove('falling'), 500);
             }
         }
@@ -321,7 +383,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 squares[i].classList.add('falling');
                 let targetSquare = squares[i];
                 
-                // SYNCED: Waits 500ms for the softer gravity drop
                 setTimeout(() => targetSquare.classList.remove('falling'), 500);
             }
         }
@@ -350,6 +411,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function restartGame() {
         score = 0;
+        milestoneTarget = 50; 
         scoreDisplay.innerHTML = score;
         deadEndMessage.style.display = 'none';
         isAnimating = false;
@@ -360,8 +422,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         for (let i = 0; i < width * width; i++) {
-            let randomCoin = Math.floor(Math.random() * coinImages.length);
-            let selectedCoin = coinImages[randomCoin];
+            let randomCoin;
+            let selectedCoin;
+            
+            do {
+                randomCoin = Math.floor(Math.random() * coinImages.length);
+                selectedCoin = coinImages[randomCoin];
+            } while (
+                (i % width >= 2 && squares[i - 1].style.backgroundImage === selectedCoin && squares[i - 2].style.backgroundImage === selectedCoin) ||
+                (i >= width * 2 && squares[i - width].style.backgroundImage === selectedCoin && squares[i - width * 2].style.backgroundImage === selectedCoin)
+            );
             
             squares[i].style.backgroundImage = selectedCoin;
             squares[i].style.backgroundColor = bgMap[selectedCoin];
@@ -369,7 +439,6 @@ document.addEventListener('DOMContentLoaded', () => {
             squares[i].classList.add('falling');
             let targetSquare = squares[i];
             
-            // SYNCED: Waits 500ms for the softer gravity drop
             setTimeout(() => targetSquare.classList.remove('falling'), 500);
         }
     }
@@ -382,6 +451,67 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function shuffleBoard() {
+        isAnimating = true; 
+
+        const deadEndP = deadEndMessage.querySelector('p');
+        deadEndP.innerHTML = "No moves! Shuffling...";
+        retryBtn.style.display = 'none'; 
+        deadEndMessage.style.display = 'block';
+
+        setTimeout(() => {
+            deadEndMessage.style.display = 'none';
+            retryBtn.style.display = 'inline-block'; 
+
+            for (let i = 0; i < width * width; i++) {
+                let randomCoin;
+                let selectedCoin;
+                
+                do {
+                    randomCoin = Math.floor(Math.random() * coinImages.length);
+                    selectedCoin = coinImages[randomCoin];
+                } while (
+                    (i % width >= 2 && squares[i - 1].style.backgroundImage === selectedCoin && squares[i - 2].style.backgroundImage === selectedCoin) ||
+                    (i >= width * 2 && squares[i - width].style.backgroundImage === selectedCoin && squares[i - width * 2].style.backgroundImage === selectedCoin)
+                );
+                
+                squares[i].style.backgroundImage = selectedCoin;
+                squares[i].style.backgroundColor = bgMap[selectedCoin];
+                
+                squares[i].classList.add('falling');
+                let targetSquare = squares[i];
+                setTimeout(() => targetSquare.classList.remove('falling'), 500);
+            }
+            
+            isAnimating = false; 
+        }, 1500); 
+    }
+
+    // BUTTON EVENT LISTENERS
+    function closeMilestoneCard() {
+        milestoneCard.style.display = 'none';
+        isAnimating = false; 
+    }
+
+    if (milestoneContinueBtn) {
+        milestoneContinueBtn.addEventListener('click', closeMilestoneCard);
+        milestoneContinueBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault(); 
+            closeMilestoneCard();
+        }, { passive: false });
+    }
+
+    if (startGameBtn) {
+        let startGame = (e) => {
+            e.preventDefault();
+            welcomeCard.style.display = 'none';
+            isAnimating = false; // UNLOCKS THE BOARD!
+        };
+        startGameBtn.addEventListener('click', startGame);
+        startGameBtn.addEventListener('touchstart', startGame, { passive: false });
+    }
+
+    // GAME LOOP
     window.setInterval(function() {
         let hasMatch = checkMatches(); 
         moveDown();
@@ -390,7 +520,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (boardIsFull && !hasMatch && !isAnimating) {
             if (!checkAvailableMoves()) {
-                deadEndMessage.style.display = 'block';
+                shuffleBoard();
             } else {
                 deadEndMessage.style.display = 'none';
             }

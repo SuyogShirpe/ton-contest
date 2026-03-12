@@ -9,8 +9,11 @@
 </head>
 <body>
     <div class="game-container">
+        <div class="high-score-badge">
+            🏆 Best: <span id="high-score-val">0</span>
+        </div>
         <header>
-            <h1 class="glow-title">TON Crush</h1>
+            <h1 class="glow-title">TON Crusher</h1>
             <div class="score-board">
                 <span class="score-icon">💎</span> Score: <span id="score" class="score-value">0</span>
             </div>
@@ -20,6 +23,23 @@
         <div id="dead-end-message">
             <p>Dead End! No moves left.</p>
             <button id="retry-btn">Retry</button>
+        </div>
+        <div id="milestone-card">
+            <div class="milestone-content">
+                <h2 class="milestone-title">Epic Combo!</h2>
+                <img id="milestone-image" src="assets/ton.jpeg" alt="TON Ecosystem">
+                <div class="milestone-score-display">Score: <span id="milestone-score-val">0</span></div>
+                <p id="milestone-quote">"Putting Crypto in every pocket."</p>
+                <button id="milestone-continue-btn">Keep Playing</button>
+            </div>
+        </div>
+        <div id="welcome-card">
+            <div class="welcome-content">
+                <h2 class="welcome-title">Welcome to<br><span class="highlight-ton">TON Crusher</span></h2>
+                <img id="welcome-image" src="assets/ton.jpeg" alt="TON Crusher">
+                <p class="welcome-desc">Swipe and match 3 or more ecosystem coins to score points and unlock exclusive stickers!</p>
+                <button id="start-game-btn">Play Now</button>
+            </div>
         </div>
     </div>
     <script src="app.js"></script>

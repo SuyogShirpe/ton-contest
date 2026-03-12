@@ -257,3 +257,172 @@ header {
     transform: scale(0.95);
     background: #0077b5;
 }
+/* Compact Milestone Reward Card Styling */
+#milestone-card {
+    display: none; /* This will now successfully hide the card on load */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85); 
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 200;
+    
+    /* Ensure display: flex; is DELETED from here! */
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+.milestone-score-display {
+    font-size: 1.3rem; /* Shrunk font */
+    font-weight: bold;
+    color: #ffd700;
+    margin-bottom: 10px;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+#milestone-quote {
+    font-size: 1rem; /* Shrunk font */
+    color: #ffffff;
+    font-style: italic;
+    margin-bottom: 18px;
+    line-height: 1.3;
+}
+
+#milestone-continue-btn {
+    background: linear-gradient(to right, #0088cc, #00e5ff);
+    color: #121212;
+    border: none;
+    padding: 10px 25px; /* Shrunk button */
+    border-radius: 10px;
+    font-weight: 900;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 229, 255, 0.4);
+    transition: transform 0.2s;
+}
+
+#milestone-continue-btn:active {
+    transform: scale(0.95);
+}
+
+@keyframes pop-in {
+    0% { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* High Score Badge */
+.high-score-badge {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 215, 0, 0.15); 
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    padding: 6px 16px;
+    border-radius: 20px;
+    color: #ffd700;
+    font-weight: 900;
+    font-size: 1rem;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3), 0 0 10px rgba(255, 215, 0, 0.2);
+    z-index: 50;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* A quick pulse effect when they break the record */
+.high-score-badge.record-broken {
+    transform: scale(1.2) rotate(-3deg);
+    background: rgba(255, 215, 0, 0.3);
+    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.6);
+}
+
+/* Welcome Landing Page Styling */
+#welcome-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 300; /* Sits on top of absolutely everything */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Sleek, Matte Card Styling for BOTH Welcome and Milestone screens */
+.welcome-content, .milestone-content {
+    background: rgba(25, 30, 45, 0.98); /* Solid dark, elegant background */
+    border: 1px solid rgba(255, 255, 255, 0.15); /* Clean, subtle border */
+    border-radius: 20px;
+    padding: 25px;
+    text-align: center;
+    width: 85%;
+    max-width: 320px;
+    /* Soft dark shadow instead of a glowing neon shadow */
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.8); 
+    animation: pop-in 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* Removed the glowing text shadows */
+.welcome-title {
+    color: #ffffff;
+    margin-bottom: 15px;
+    font-size: 1.6rem;
+    text-transform: uppercase;
+    line-height: 1.2;
+}
+
+.milestone-title {
+    color: #00e5ff;
+    margin-bottom: 12px;
+    font-size: 1.8rem;
+    text-transform: uppercase;
+}
+
+.highlight-ton {
+    color: #00e5ff;
+    font-size: 2.2rem;
+    font-weight: 900;
+}
+
+/* Cleaned up image shadows */
+#welcome-image, #milestone-image {
+    width: 90px;
+    height: 90px;
+    margin-bottom: 15px;
+    border-radius: 16px;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 15px rgba(0,0,0,0.6));
+}
+
+.welcome-desc {
+    font-size: 1.1rem;
+    color: #e2e8f0;
+    margin-bottom: 25px;
+    line-height: 1.4;
+}
+
+#start-game-btn {
+    background: linear-gradient(to right, #0088cc, #00e5ff);
+    color: #121212;
+    border: none;
+    padding: 12px 35px;
+    border-radius: 12px;
+    font-weight: 900;
+    font-size: 1.3rem;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 229, 255, 0.4);
+    transition: transform 0.2s;
+}
+
+#start-game-btn:active {
+    transform: scale(0.95);
+}
